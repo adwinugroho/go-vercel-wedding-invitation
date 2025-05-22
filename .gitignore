@@ -1,0 +1,17 @@
+.vercel
+
+.env
+config/config.yaml
+config/config.prod.yaml
+
+# macOS system files
+*.DS_Store
+
+
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
