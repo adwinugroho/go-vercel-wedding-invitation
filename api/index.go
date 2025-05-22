@@ -13,7 +13,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.GET("/health", func(c echo.Context) error {
+	e.GET("/api/health", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello world! Status OK")
 	})
 

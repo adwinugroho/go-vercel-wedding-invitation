@@ -6,6 +6,6 @@ import (
 )
 
 func WeddingRoutes(e *echo.Echo) {
-	var wishes = e.Group("/wishes")
+	var wishes = e.Group("/api/wishes")
 	wishes.GET("/", controller.GetListWishes)
 }
