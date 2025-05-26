@@ -22,7 +22,7 @@ func NewController(wishesSvc service.WishesInterface) WeddingController {
 func (h *WeddingController) GetListWishes(c echo.Context) error {
 	limit := c.QueryParam("limit")
 	if limit == "" {
-		limit = "3"
+		limit = "10"
 	}
 
 	limitInt, err := strconv.Atoi(limit)

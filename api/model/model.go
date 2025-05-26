@@ -12,8 +12,8 @@ type (
 	Reservation struct {
 		ID          string `json:"id"`
 		Name        string `json:"name"`
-		IsAttend    bool   `json:"is_attend"`
-		NumberGuest int32  `json:"number_guest"`
+		IsAttending bool   `json:"is_attending"`
+		GuestCount  int32  `json:"guest_count"`
 		CreatedAt   string `json:"created_at"`
 	}
 )

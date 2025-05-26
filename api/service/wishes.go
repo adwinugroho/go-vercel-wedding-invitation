@@ -24,7 +24,8 @@ func NewServiceWishes(repo repository.WishesInterface) WishesInterface {
 }
 
 func (s *wishesImp) New(data model.Wishes) (*string, error) {
-	newID, err := s.repo.Insert(data)
+	// ctx := context.Background()
+	newID, err := s.repo.InsertWithSupabaseClient(data)
 	if err != nil {
 		log.Printf("Error while saving data:%+v\n", err)
 		return nil, err
@@ -34,8 +35,8 @@ func (s *wishesImp) New(data model.Wishes) (*string, error) {
 }
 
 func (s *wishesImp) List(offset, limit int) ([]model.Wishes, error) {
-	offset = (offset - 1) * limit
-	publishedWishes, err := s.repo.List(offset, limit)
+	// ctx := context.Background()
+	publishedWishes, err := s.repo.ListWithSupabaseClient(offset, limit)
 	if err != nil {
 		log.Printf("Error while get list:%+v\n", err)
 		return nil, err
