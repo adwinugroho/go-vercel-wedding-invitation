@@ -100,7 +100,7 @@ func (c *wishesImp) ListWithSupabaseClient(offset, limit int) ([]model.Wishes, e
 		From("tb_wishes").
 		Select("*").
 		LimitWithOffset(limit, offsetPage).
-		Eq("is_published", "false").
+		Eq("is_published", "true").
 		Execute(&results)
 	if err != nil {
 		log.Printf("error listing wishes: %+v\n", err)
