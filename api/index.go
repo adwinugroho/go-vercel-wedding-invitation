@@ -40,7 +40,11 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	repoWishes := repository.NewWishesRepository(nil, supaClient)
 	serviceWishes := service.NewServiceWishes(repoWishes)
-	weddingController := controller.NewController(serviceWishes)
+
+	repoRSVP := repository.NewReservationRepository(nil, supaClient)
+	serviceRSVP := service.NewServiceRSVP(repoRSVP)
+
+	weddingController := controller.NewController(serviceWishes, serviceRSVP)
 
 	weddingController.WeddingRoutes(e)
 	e.ServeHTTP(w, r)

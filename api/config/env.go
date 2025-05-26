@@ -13,4 +13,6 @@ var (
 	SUPABASE_URL      = os.Getenv("SUPABASE_URL")
 	SUPABASE_API_KEY  = os.Getenv("SUPABASE_API_KEY")
 	SUPABASE_PASSWORD = os.Getenv("SUPABASE_PASSWORD")
+	// api key
+	API_KEY = os.Getenv("API_KEY")
 )

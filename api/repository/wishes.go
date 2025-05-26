@@ -79,7 +79,7 @@ func (c *wishesImp) InsertWithSupabaseClient(data model.Wishes) (string, error) 
 	}
 
 	log.Println("successfully inserted new data with supabase:", data.ID)
-	return "", nil
+	return data.ID, nil
 }
 
 func (c *wishesImp) ListWithSupabaseClient(offset, limit int) ([]model.Wishes, error) {
