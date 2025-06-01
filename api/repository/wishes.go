@@ -33,9 +33,9 @@ func NewWishesRepository(conn *pgx.Conn, connSupabase *supabase.Client) WishesIn
 
 func (c *wishesImp) Insert(ctx context.Context, data model.Wishes) (string, error) {
 	data.ID = uuid.New().String()
-	// defer c.DB.Close()
+	defer c.DB.Close(ctx)
 	query := `INSERT INTO tb_wishes (id, name, message, is_published, created_at) VALUES ($1, $2, $3, $4, $5)`
-	_, err := c.DB.Exec(ctx, query, data.Name, data.Message, data.IsPublished, data.CreatedAt)
+	_, err := c.DB.Exec(ctx, query, data.ID, data.Name, data.Message, data.IsPublished, data.CreatedAt)
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)
 		return "", err
@@ -47,8 +47,20 @@ func (c *wishesImp) Insert(ctx context.Context, data model.Wishes) (string, erro
 
 func (c *wishesImp) List(ctx context.Context, offset, limit int) ([]model.Wishes, error) {
 	var results []model.Wishes
+
+	// Safety: ensure range is valid
+	if limit <= 0 {
+		limit = 10 // default limit
+	}
+	if offset <= 0 {
+		offset = 1
+	}
+
+	offsetPage := (offset - 1) * limit
+
 	query := `SELECT id, name, message FROM tb_wishes WHERE is_published = true LIMIT $1 OFFSET $2`
-	rows, err := c.DB.Query(ctx, query, limit, offset)
+	defer c.DB.Close(ctx)
+	rows, err := c.DB.Query(ctx, query, limit, offsetPage)
 	if err != nil {
 		log.Printf("Error cause:%+v\n", err)
 		return nil, err

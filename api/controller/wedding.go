@@ -52,8 +52,8 @@ func (h *WeddingController) GetListWishes(c echo.Context) error {
 
 	resp, err := h.WishesService.List(pageInt, limitInt)
 	if err != nil {
-		log.Printf("[controller] Error while get list:%+v\n", err)
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		log.Printf("[controller] Error while get list wishes:%+v\n", err)
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"status":  false,
 			"message": "Internal Server Error, Please Contact Customer Service.",
 		})
@@ -105,9 +105,70 @@ func (h *WeddingController) NewWishes(c echo.Context) error {
 	})
 	if err != nil {
 		log.Printf("[controller] Error create a new wish:%+v\n", err)
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"status":  false,
 			"message": "Internal Server Error, Please Contact Customer Service.",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
+		"data":    resp,
+		"message": "Success!",
+	})
+}
+
+func (h *WeddingController) GetListAttending(c echo.Context) error {
+	limit := c.QueryParam("limit")
+	if limit == "" {
+		limit = "10"
+	}
+
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"status":  false,
+			"message": "Error! Invalid number format on limit",
+		})
+	}
+
+	page := c.QueryParam("page")
+	if page == "" {
+		page = "1"
+	}
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"status":  false,
+			"message": "Error! Invalid number format on page",
+		})
+	}
+
+	isAttending := c.QueryParam("is_attending")
+	isAttendingBoolean := false
+	if isAttending == "" {
+		isAttendingBoolean = false
+	}
+
+	if isAttending == "false" {
+		isAttendingBoolean = false
+	} else if isAttending == "true" {
+		isAttendingBoolean = true
+	}
+
+	resp, err := h.RSVPService.List(pageInt, limitInt, isAttendingBoolean)
+	if err != nil {
+		log.Printf("[controller] Error while get list rsvp:%+v\n", err)
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"status":  false,
+			"message": "Internal Server Error, Please Contact Customer Service.",
+		})
+	} else if resp == nil {
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  true,
+			"message": "Data Not Found.",
+			"data":    make([]string, 0),
 		})
 	}
 
@@ -160,7 +221,7 @@ func (h *WeddingController) NewReservation(c echo.Context) error {
 	})
 	if err != nil {
 		log.Printf("[controller] Error while create new reservation:%+v\n", err)
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"status":  false,
 			"message": "Internal Server Error, Please Contact Customer Service.",
 		})

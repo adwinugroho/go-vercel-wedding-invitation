@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -29,19 +30,19 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return c.String(http.StatusOK, "OK! We are ready!")
 	})
 
-	// ctx := context.Background()
+	ctx := context.Background()
 
-	// pgClient, err := config.InitPostgresConnection(ctx, config.DB_HOST, config.DB_PORT, config.DB_USER, config.DB_PASSWORD, config.DB_NAME)
-	// if err != nil {
-	// 	log.Fatal("Error while connect to client postgres:", err)
-	// }
+	pgClient, err := config.InitPostgresConnection(ctx, config.DB_HOST, config.DB_PORT, config.DB_USER, config.DB_PASSWORD, config.DB_NAME)
+	if err != nil {
+		log.Fatal("Error while connect to client postgres:", err)
+	}
 
 	supaClient := config.InitSupabaseConnection(config.SUPABASE_URL, config.SUPABASE_API_KEY, config.SUPABASE_PASSWORD)
 
-	repoWishes := repository.NewWishesRepository(nil, supaClient)
+	repoWishes := repository.NewWishesRepository(pgClient, supaClient)
 	serviceWishes := service.NewServiceWishes(repoWishes)
 
-	repoRSVP := repository.NewReservationRepository(nil, supaClient)
+	repoRSVP := repository.NewReservationRepository(pgClient, supaClient)
 	serviceRSVP := service.NewServiceRSVP(repoRSVP)
 
 	weddingController := controller.NewController(serviceWishes, serviceRSVP)

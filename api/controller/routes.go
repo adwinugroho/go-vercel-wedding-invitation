@@ -38,7 +38,7 @@ func (h *WeddingController) WeddingRoutes(e *echo.Echo) {
 	wishes.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(10))) // 10 req/seconds
 	wishes.Use(h.APIKeyMiddleware)
 
-	wishes.GET("/", h.GetListWishes)
+	wishes.GET("/list", h.GetListWishes)
 	wishes.POST("/new", h.NewWishes)
 
 	var rsvp = e.Group("/api/rsvp")
@@ -48,4 +48,5 @@ func (h *WeddingController) WeddingRoutes(e *echo.Echo) {
 	rsvp.Use(h.APIKeyMiddleware)
 
 	rsvp.POST("/new", h.NewReservation)
+	rsvp.GET("/list", h.GetListAttending)
 }
