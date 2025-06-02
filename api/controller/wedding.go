@@ -100,7 +100,7 @@ func (h *WeddingController) NewWishes(c echo.Context) error {
 	resp, err := h.WishesService.New(model.Wishes{
 		Name:        body.Name,
 		Message:     body.Message,
-		IsPublished: false,
+		IsPublished: true,
 		CreatedAt:   helpers.TimeHostNow("Asia/Jakarta").Format("2006-01-02 15:04:05"),
 	})
 	if err != nil {
