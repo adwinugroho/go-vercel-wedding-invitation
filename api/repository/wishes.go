@@ -58,7 +58,7 @@ func (c *wishesImp) List(ctx context.Context, offset, limit int) ([]model.Wishes
 
 	offsetPage := (offset - 1) * limit
 
-	query := `SELECT id, name, message FROM tb_wishes WHERE is_published = true LIMIT $1 OFFSET $2`
+	query := `SELECT id, name, message, created_at FROM tb_wishes WHERE is_published = true LIMIT $1 OFFSET $2`
 	defer c.DB.Close(ctx)
 	rows, err := c.DB.Query(ctx, query, limit, offsetPage)
 	if err != nil {
@@ -70,7 +70,7 @@ func (c *wishesImp) List(ctx context.Context, offset, limit int) ([]model.Wishes
 	for rows.Next() {
 		var result model.Wishes
 
-		err = rows.Scan(&result.ID, &result.Name, &result.Message)
+		err = rows.Scan(&result.ID, &result.Name, &result.Message, &result.CreatedAt)
 		if err != nil {
 			log.Printf("Error while scan:%+v\n", err)
 		}
