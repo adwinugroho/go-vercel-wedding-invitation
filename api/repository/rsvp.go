@@ -58,7 +58,10 @@ func (c *rsvpImp) List(ctx context.Context, offset, limit int, isAttending bool)
 
 	offsetPage := (offset - 1) * limit
 
-	query := `SELECT id, name, is_attending, guest_count, created_at FROM tb_rsvp WHERE is_attending = $3 LIMIT $1 OFFSET $2`
+	query := `SELECT id, name, is_attending, guest_count, created_at 
+	FROM tb_rsvp 
+	WHERE is_attending = $3 ORDER BY created_at DESC 
+	LIMIT $1 OFFSET $2`
 
 	defer c.DB.Close(ctx)
 	rows, err := c.DB.Query(ctx, query, limit, offsetPage, isAttending)
