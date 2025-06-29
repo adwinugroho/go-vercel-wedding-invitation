@@ -7,27 +7,22 @@ import (
 	"github.com/adwinugroho/go-vercel-wedding-invitation/api/model"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/nedpals/supabase-go"
 )
 
 type (
 	WishesInterface interface {
 		Insert(ctx context.Context, data model.Wishes) (string, error)
 		List(ctx context.Context, offset, limit int) ([]model.Wishes, error)
-		InsertWithSupabaseClient(data model.Wishes) (string, error)
-		ListWithSupabaseClient(offset, limit int) ([]model.Wishes, error)
 	}
 )
 
 type wishesImp struct {
-	DB         *pgx.Conn
-	DBSupabase *supabase.Client
+	DB *pgx.Conn
 }
 
-func NewWishesRepository(conn *pgx.Conn, connSupabase *supabase.Client) WishesInterface {
+func NewWishesRepository(conn *pgx.Conn) WishesInterface {
 	return &wishesImp{
-		DB:         conn,
-		DBSupabase: connSupabase,
+		DB: conn,
 	}
 }
 
@@ -83,44 +78,44 @@ func (c *wishesImp) List(ctx context.Context, offset, limit int) ([]model.Wishes
 	return results, nil
 }
 
-func (c *wishesImp) InsertWithSupabaseClient(data model.Wishes) (string, error) {
-	var results []model.Wishes
-	data.ID = uuid.New().String()
-	err := c.DBSupabase.DB.From("tb_wishes").Insert(data).Execute(&results)
-	if err != nil {
-		log.Println("error cause:", err)
-		return "", err
-	}
+// func (c *wishesImp) InsertWithSupabaseClient(data model.Wishes) (string, error) {
+// 	var results []model.Wishes
+// 	data.ID = uuid.New().String()
+// 	err := c.DBSupabase.DB.From("tb_wishes").Insert(data).Execute(&results)
+// 	if err != nil {
+// 		log.Println("error cause:", err)
+// 		return "", err
+// 	}
 
-	log.Println("successfully inserted new data with supabase:", data.ID)
-	return data.ID, nil
-}
+// 	log.Println("successfully inserted new data with supabase:", data.ID)
+// 	return data.ID, nil
+// }
 
-func (c *wishesImp) ListWithSupabaseClient(offset, limit int) ([]model.Wishes, error) {
-	var results []model.Wishes
+// func (c *wishesImp) ListWithSupabaseClient(offset, limit int) ([]model.Wishes, error) {
+// 	var results []model.Wishes
 
-	// Safety: ensure range is valid
-	if limit <= 0 {
-		limit = 10 // default limit
-	}
-	if offset <= 0 {
-		offset = 1
-	}
+// 	// Safety: ensure range is valid
+// 	if limit <= 0 {
+// 		limit = 10 // default limit
+// 	}
+// 	if offset <= 0 {
+// 		offset = 1
+// 	}
 
-	offsetPage := (offset - 1) * limit
+// 	offsetPage := (offset - 1) * limit
 
-	err := c.DBSupabase.
-		DB.
-		From("tb_wishes").
-		Select("*").
-		LimitWithOffset(limit, offsetPage).
-		Eq("is_published", "true").
-		Execute(&results)
-	if err != nil {
-		log.Printf("error listing wishes: %+v\n", err)
-		return nil, err
-	}
+// 	err := c.DBSupabase.
+// 		DB.
+// 		From("tb_wishes").
+// 		Select("*").
+// 		LimitWithOffset(limit, offsetPage).
+// 		Eq("is_published", "true").
+// 		Execute(&results)
+// 	if err != nil {
+// 		log.Printf("error listing wishes: %+v\n", err)
+// 		return nil, err
+// 	}
 
-	log.Println("successfully return data with total:", len(results))
-	return results, nil
-}
+// 	log.Println("successfully return data with total:", len(results))
+// 	return results, nil
+// }

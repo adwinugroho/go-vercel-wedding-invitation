@@ -37,15 +37,18 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Error while connect to client postgres:", err)
 	}
 
-	supaClient := config.InitSupabaseConnection(config.SUPABASE_URL, config.SUPABASE_API_KEY, config.SUPABASE_PASSWORD)
+	// supaClient := config.InitSupabaseConnection(config.SUPABASE_URL, config.SUPABASE_API_KEY, config.SUPABASE_PASSWORD)
 
-	repoWishes := repository.NewWishesRepository(pgClient, supaClient)
+	repoWishes := repository.NewWishesRepository(pgClient)
 	serviceWishes := service.NewServiceWishes(repoWishes)
 
-	repoRSVP := repository.NewReservationRepository(pgClient, supaClient)
+	repoRSVP := repository.NewReservationRepository(pgClient)
 	serviceRSVP := service.NewServiceRSVP(repoRSVP)
 
-	weddingController := controller.NewController(serviceWishes, serviceRSVP)
+	repoGift := repository.NewGiftRepository(pgClient)
+	serviceGift := service.NewServiceGift(repoGift)
+
+	weddingController := controller.NewController(serviceWishes, serviceRSVP, serviceGift)
 
 	weddingController.WeddingRoutes(e)
 	e.ServeHTTP(w, r)

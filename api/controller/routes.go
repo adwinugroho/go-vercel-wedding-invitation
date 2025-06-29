@@ -49,4 +49,14 @@ func (h *WeddingController) WeddingRoutes(e *echo.Echo) {
 
 	rsvp.POST("/new", h.NewReservation)
 	rsvp.GET("/list", h.GetListAttending)
+
+	var gifts = e.Group("/api/gifts")
+
+	gifts.Use(middleware.Secure())                                              // Add security headers
+	gifts.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(10))) // 10 req/seconds
+	gifts.Use(h.APIKeyMiddleware)
+
+	gifts.POST("/new", h.NewGift)
+	gifts.GET("/list", h.GetListGift)
+	gifts.PUT("/booked", h.MarkedGiftAsBooked)
 }
